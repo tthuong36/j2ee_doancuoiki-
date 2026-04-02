@@ -37,9 +37,14 @@ Project doc cac bien:
 Ban co the set tam thoi trong PowerShell:
 
 ```powershell
-$env:DB_URL="jdbc:mysql://localhost:3306/car_rental?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC"
+$env:DB_URL="jdbc:mysql://interchange.proxy.rlwy.net:16458/railway?useSSL=true&requireSSL=true&allowPublicKeyRetrieval=true&serverTimezone=UTC"
 $env:DB_USERNAME="root"
-$env:DB_PASSWORD="root"
+$env:DB_PASSWORD="your_railway_mysql_password"
+$env:MYSQLHOST="interchange.proxy.rlwy.net"
+$env:MYSQLPORT="16458"
+$env:MYSQLDATABASE="railway"
+$env:MYSQLUSER="root"
+$env:MYSQLPASSWORD="your_railway_mysql_password"
 $env:JWT_SECRET="replace-with-your-own-long-secret-1234567890"
 $env:JWT_EXPIRATION_MS="604800000"
 $env:UPLOAD_DIR="uploads"
