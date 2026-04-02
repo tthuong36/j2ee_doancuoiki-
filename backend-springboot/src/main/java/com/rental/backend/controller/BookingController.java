@@ -14,7 +14,7 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import java.math.BigDecimal;
 import java.time.temporal.ChronoUnit;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -52,9 +52,7 @@ public class BookingController {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Car is not available");
         }
 
-        Set<BookingStatus> activeStatuses = new HashSet<>();
-        activeStatuses.add(BookingStatus.PENDING);
-        activeStatuses.add(BookingStatus.CONFIRMED);
+        Set<BookingStatus> activeStatuses = EnumSet.of(BookingStatus.PENDING, BookingStatus.CONFIRMED);
 
         boolean overlapped = bookingRepository.existsByCarIdAndStatusInAndStartDateLessThanAndEndDateGreaterThan(
             car.getId(),

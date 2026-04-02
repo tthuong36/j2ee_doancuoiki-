@@ -45,7 +45,8 @@ public class AuthController {
 
     @PostMapping("/register")
     public TokenResponse register(@Valid @RequestBody RegisterRequest request) {
-        if (userRepository.existsByEmail(request.getEmail())) {
+        String normalizedEmail = request.getEmail().toLowerCase(Locale.ROOT).trim();
+        if (userRepository.existsByEmail(normalizedEmail)) {
             throw new ApiException(HttpStatus.BAD_REQUEST, "Email already exists");
         }
 
@@ -53,7 +54,7 @@ public class AuthController {
 
         User user = new User();
         user.setName(request.getName());
-        user.setEmail(request.getEmail().toLowerCase(Locale.ROOT).trim());
+        user.setEmail(normalizedEmail);
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setRole(role);
         userRepository.save(user);

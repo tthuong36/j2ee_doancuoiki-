@@ -7,6 +7,7 @@ import com.rental.backend.entity.Review;
 import com.rental.backend.entity.User;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import org.springframework.stereotype.Component;
 
@@ -18,7 +19,7 @@ public class ApiMapper {
         map.put("id", user.getId());
         map.put("name", user.getName());
         map.put("email", user.getEmail());
-        map.put("role", user.getRole().name().toLowerCase());
+        map.put("role", user.getRole().name().toLowerCase(Locale.ROOT));
         map.put("isActive", user.getIsActive());
         map.put("phone", user.getPhone());
         map.put("address", user.getAddress());
@@ -69,14 +70,14 @@ public class ApiMapper {
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("id", post.getId());
         map.put("author", user(post.getAuthor()));
-        map.put("postType", post.getPostType().name().toLowerCase());
+        map.put("postType", post.getPostType().name().toLowerCase(Locale.ROOT));
         map.put("title", post.getTitle());
         map.put("content", post.getContent());
         map.put("location", post.getLocation());
         map.put("contactPhone", post.getContactPhone());
         map.put("budgetPerDay", post.getBudgetPerDay());
         map.put("car", post.getCar() != null ? car(post.getCar(), false) : null);
-        map.put("status", post.getStatus().name().toLowerCase());
+        map.put("status", post.getStatus().name().toLowerCase(Locale.ROOT));
         map.put("reviewedBy", post.getReviewedBy() != null ? user(post.getReviewedBy()) : null);
         map.put("reviewedAt", post.getReviewedAt());
         map.put("reviewNote", post.getReviewNote());
@@ -94,7 +95,7 @@ public class ApiMapper {
         map.put("startDate", booking.getStartDate());
         map.put("endDate", booking.getEndDate());
         map.put("totalPrice", booking.getTotalPrice());
-        map.put("status", booking.getStatus().name().toLowerCase());
+        map.put("status", booking.getStatus().name().toLowerCase(Locale.ROOT));
         map.put("createdAt", booking.getCreatedAt());
         map.put("updatedAt", booking.getUpdatedAt());
         return map;

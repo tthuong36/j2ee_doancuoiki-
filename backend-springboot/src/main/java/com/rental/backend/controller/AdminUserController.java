@@ -47,7 +47,7 @@ public class AdminUserController {
         List<User> filtered = userRepository.findAll().stream()
             .filter(user -> q == null || matchesQuery(user, q))
             .filter(user -> role == null || user.getRole().name().equalsIgnoreCase(role))
-            .filter(user -> isActive == null || Boolean.TRUE.equals(user.getIsActive()) == isActive)
+            .filter(user -> isActive == null || isActive.equals(Boolean.TRUE.equals(user.getIsActive())))
             .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
             .toList();
 

@@ -2,7 +2,6 @@ package com.rental.backend.controller;
 
 import com.rental.backend.dto.car.CarUpsertRequest;
 import com.rental.backend.entity.Car;
-import com.rental.backend.entity.Review;
 import com.rental.backend.entity.User;
 import com.rental.backend.entity.enums.UserRole;
 import com.rental.backend.exception.ApiException;
@@ -16,6 +15,7 @@ import jakarta.transaction.Transactional;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -52,7 +52,7 @@ public class CarController {
         @RequestParam(value = "maxPrice", required = false) BigDecimal maxPrice
     ) {
         return carRepository.findAll().stream()
-            .filter(car -> available == null || car.getAvailable().equals(available))
+            .filter(car -> available == null || available.equals(car.getAvailable()))
             .filter(car -> q == null || containsIgnoreCase(car.getMake(), q) || containsIgnoreCase(car.getModel(), q) || containsIgnoreCase(car.getPlate(), q))
             .filter(car -> minPrice == null || car.getPricePerDay().compareTo(minPrice) >= 0)
             .filter(car -> maxPrice == null || car.getPricePerDay().compareTo(maxPrice) <= 0)
@@ -227,6 +227,7 @@ public class CarController {
     }
 
     private boolean containsIgnoreCase(String value, String query) {
-        return value != null && value.toLowerCase().contains(query.toLowerCase());
+        return value != null && query != null
+            && value.toLowerCase(Locale.ROOT).contains(query.toLowerCase(Locale.ROOT));
     }
 }
