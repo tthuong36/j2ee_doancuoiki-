@@ -28,7 +28,7 @@ export default function ManageCarsPage() {
     try {
       await deleteCar(id)
       toast.success('Đã xóa xe')
-      setCars(p => p.filter(c => c._id !== id))
+      setCars(p => p.filter(c => (c.id || c._id) !== id))
     } catch {
       toast.error('Xóa thất bại')
     }
@@ -132,7 +132,7 @@ export default function ManageCarsPage() {
             </thead>
             <tbody>
               {filtered.map(car => (
-                <tr key={car._id}
+                <tr key={car.id || car._id}
                   style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }}
                   onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                   onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
@@ -183,7 +183,7 @@ export default function ManageCarsPage() {
                   {/* Hành động */}
                   <td style={{ padding: '14px 16px' }}>
                     <button
-                      onClick={() => handleDelete(car._id, `${car.make} ${car.model}`)}
+                      onClick={() => handleDelete(car.id || car._id, `${car.make} ${car.model}`)}
                       style={{ padding: '6px 14px', background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.3)', color: '#F87171', borderRadius: '7px', cursor: 'pointer', fontSize: '13px', fontWeight: '600', transition: 'all 0.2s' }}
                       onMouseEnter={e => { e.currentTarget.style.background = '#DC2626'; e.currentTarget.style.color = '#fff' }}
                       onMouseLeave={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.color = '#F87171' }}

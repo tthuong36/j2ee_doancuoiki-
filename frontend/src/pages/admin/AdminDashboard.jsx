@@ -113,7 +113,7 @@ export default function AdminDashboard() {
                 </thead>
                 <tbody>
                   {cars.slice(0, 8).map((car) => (
-                    <tr key={car._id} className="border-b border-white/5 hover:bg-white/2">
+                    <tr key={car.id || car._id} className="border-b border-white/5 hover:bg-white/2">
                       <td className="py-3 pr-4 font-medium text-white">{car.make} {car.model} {car.year}</td>
                       <td className="py-3 pr-4 text-gray-400">{car.plate}</td>
                       <td className="py-3 pr-4 text-gray-400">{car.location ?? '—'}</td>

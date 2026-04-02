@@ -22,10 +22,10 @@ cp .env.example .env
 Mở file `.env` và điền URL backend:
 
 ```
-VITE_API_BASE_URL=https://thuexetulai.onrender.com/api
+VITE_API_BASE_URL=http://localhost:5000/api
 ```
 
-> Có thể đặt `VITE_API_BASE_URL=https://thuexetulai.onrender.com` hoặc `.../api`, frontend sẽ tự chuẩn hóa về `.../api`.
+> Có thể đặt `VITE_API_BASE_URL=http://localhost:5000` hoặc `.../api`, frontend sẽ tự chuẩn hóa về `.../api`.
 
 ### 3. Chạy development
 
@@ -33,7 +33,7 @@ VITE_API_BASE_URL=https://thuexetulai.onrender.com/api
 npm run dev
 ```
 
-Mở trình duyệt tại: **http://localhost:3000**
+Mở trình duyệt tại: **http://localhost:3001**
 
 ### 4. Build production
 

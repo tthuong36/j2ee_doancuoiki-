@@ -8,7 +8,7 @@ export default defineConfig({
     // Proxy API calls tới backend để tránh lỗi CORS khi dev
     proxy: {
       '/api': {
-        target: 'https://thuexetulai.onrender.com',
+        target: 'http://localhost:5000',
         changeOrigin: true,
       },
     },

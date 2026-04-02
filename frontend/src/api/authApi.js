@@ -22,3 +22,10 @@ export function register(data) {
 export function login(data) {
   return axiosClient.post('/auth/login', data)
 }
+
+/**
+ * Lấy thông tin người dùng hiện tại từ token.
+ */
+export function getMe() {
+  return axiosClient.get('/auth/me')
+}

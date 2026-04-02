@@ -147,7 +147,7 @@ export default function SearchPage() {
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
                 {filtered.map((car) => (
-                  <CarCard key={car._id} car={car} />
+                  <CarCard key={car.id || car._id} car={car} />
                 ))}
               </div>
             )}

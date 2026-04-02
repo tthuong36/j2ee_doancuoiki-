@@ -6,7 +6,7 @@
 
 const normalizeApiBaseUrl = (url) => {
   const cleanUrl = (url || '').trim().replace(/\/+$/, '')
-  if (!cleanUrl) return 'https://thuexetulai.onrender.com/api'
+  if (!cleanUrl) return 'http://localhost:5000/api'
   return cleanUrl.endsWith('/api') ? cleanUrl : `${cleanUrl}/api`
 }
 

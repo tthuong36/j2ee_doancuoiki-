@@ -35,9 +35,9 @@ export function updateUserProfile(id, data) {
 
 // Profile của mình (dùng trong ProfilePage)
 export function getMyProfile() {
-  return axiosClient.get('/users/me/profile')
+  return axiosClient.get('/auth/me')
 }
 
 export function updateMyProfile(data) {
-  return axiosClient.put('/users/me/profile', data)
+  return axiosClient.put('/auth/me', data)
 }

@@ -130,7 +130,7 @@ export default function CarDetailPage() {
             {/* ══════════════════════════════════
                 PHẦN ĐÁNH GIÁ XE — thêm vào đây
             ══════════════════════════════════ */}
-            <ReviewSection carId={car._id} />
+            <ReviewSection carId={car.id || car._id} />
 
           </div>
 

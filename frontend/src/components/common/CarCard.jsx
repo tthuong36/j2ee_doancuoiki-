@@ -16,10 +16,11 @@ const PLACEHOLDER_IMG =
  */
 export default function CarCard({ car }) {
   const imageUrl = car.images?.[0] ?? PLACEHOLDER_IMG
+  const carId = car.id || car._id
 
   return (
     <Link
-      to={`/cars/${car._id}`}
+      to={`/cars/${carId}`}
       className="card block overflow-hidden group hover:border-primary/40
                  hover:-translate-y-1 transition-all duration-250"
     >

@@ -172,7 +172,7 @@ export default function BulletinBoardPage() {
         ) : (
           <div className="space-y-4">
             {posts.map((post) => (
-              <div key={post._id} className="card p-5 hover:border-primary/30 transition-colors">
+              <div key={post.id || post._id} className="card p-5 hover:border-primary/30 transition-colors">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     {/* Type badge */}

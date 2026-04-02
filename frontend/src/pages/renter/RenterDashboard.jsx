@@ -241,7 +241,7 @@ export default function RenterDashboard() {
               </thead>
               <tbody>
                 {bookings.slice(0, 5).map(b => (
-                  <tr key={b._id}
+                  <tr key={b.id || b._id}
                     style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', transition: 'background 0.15s' }}
                     onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                     onMouseLeave={e => e.currentTarget.style.background = 'transparent'}

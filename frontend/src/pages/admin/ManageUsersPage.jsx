@@ -15,6 +15,7 @@ const ROLE_CONFIG = {
 
 // ── Modal chi tiết + sửa user ────────────────────────────────
 function UserModal({ user, onClose, onRoleChange, onToggle, onDelete }) {
+  const userId = user.id || user._id
   const [newRole, setNewRole] = useState(user.role)
   const [saving,  setSaving]  = useState(false)
 
@@ -22,7 +23,7 @@ function UserModal({ user, onClose, onRoleChange, onToggle, onDelete }) {
     if (newRole === user.role) { toast('Role không thay đổi'); return }
     setSaving(true)
     try {
-      await onRoleChange(user._id, newRole)
+      await onRoleChange(userId, newRole)
       toast.success('Đã đổi role thành công!')
       onClose()
     } catch (err) {
@@ -67,7 +68,7 @@ function UserModal({ user, onClose, onRoleChange, onToggle, onDelete }) {
         {/* Thông tin chi tiết */}
         <div style={{ background: '#252931', borderRadius: '10px', padding: '4px 16px', marginBottom: '20px' }}>
           {[
-            { label: 'ID',         value: user._id },
+            { label: 'ID',         value: userId },
             { label: 'Số ĐT',      value: user.phone   || '—' },
             { label: 'Địa chỉ',    value: user.address || '—' },
             { label: 'Ngày tạo',   value: formatDate(user.createdAt) },
@@ -110,7 +111,7 @@ function UserModal({ user, onClose, onRoleChange, onToggle, onDelete }) {
             {isActive ? '🔒 Khóa Tài Khoản' : '🔓 Mở Tài Khoản'}
           </button>
           <button
-            onClick={() => { onDelete(user._id, user.name || user.email); onClose() }}
+            onClick={() => { onDelete(userId, user.name || user.email); onClose() }}
             style={{ flex: 1, padding: '10px', background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.25)', color: '#F87171', borderRadius: '8px', cursor: 'pointer', fontWeight: '600', fontSize: '13px' }}>
             🗑️ Xóa Tài Khoản
           </button>
@@ -155,17 +156,18 @@ export default function ManageUsersPage() {
   // Đổi role → cập nhật local state
   async function handleRoleChange(id, role) {
     const { data } = await changeUserRole(id, role)
-    setUsers(p => p.map(u => u._id === id ? data : u))
-    if (selectedUser?._id === id) setSelectedUser(data)
+    setUsers(p => p.map(u => (u.id || u._id) === id ? data : u))
+    if ((selectedUser?.id || selectedUser?._id) === id) setSelectedUser(data)
   }
 
   // Khóa / mở khóa
   async function handleToggle(user) {
     const newActive = user.isActive === false ? true : false
+    const userId = user.id || user._id
     try {
-      const { data } = await toggleUserStatus(user._id, newActive)
-      setUsers(p => p.map(u => u._id === user._id ? data : u))
-      if (selectedUser?._id === user._id) setSelectedUser(data)
+      const { data } = await toggleUserStatus(userId, newActive)
+      setUsers(p => p.map(u => (u.id || u._id) === userId ? data : u))
+      if ((selectedUser?.id || selectedUser?._id) === userId) setSelectedUser(data)
       toast.success(newActive ? '🔓 Đã mở khóa tài khoản' : '🔒 Đã khóa tài khoản')
     } catch (err) {
       toast.error(err.response?.data?.message ?? 'Cập nhật thất bại')
@@ -178,7 +180,7 @@ export default function ManageUsersPage() {
     try {
       await deleteUser(id)
       toast.success('Đã xóa tài khoản')
-      setUsers(p => p.filter(u => u._id !== id))
+      setUsers(p => p.filter(u => (u.id || u._id) !== id))
       setPagination(p => ({ ...p, total: p.total - 1 }))
     } catch (err) {
       toast.error(err.response?.data?.message ?? 'Xóa thất bại')
@@ -297,9 +299,10 @@ export default function ManageUsersPage() {
               </thead>
               <tbody>
                 {users.map(u => {
+                  const userId = u.id || u._id
                   const isActive = u.isActive !== false
                   return (
-                    <tr key={u._id}
+                    <tr key={userId}
                       style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', cursor: 'pointer', transition: 'background 0.15s' }}
                       onMouseEnter={e => e.currentTarget.style.background = 'rgba(255,255,255,0.02)'}
                       onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
@@ -356,7 +359,7 @@ export default function ManageUsersPage() {
                             style={{ padding: '5px 10px', background: isActive ? 'rgba(251,191,36,0.1)' : 'rgba(52,211,153,0.1)', border: `1px solid ${isActive ? 'rgba(251,191,36,0.25)' : 'rgba(52,211,153,0.25)'}`, color: isActive ? '#FBBF24' : '#34D399', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}>
                             {isActive ? '🔒' : '🔓'}
                           </button>
-                          <button onClick={() => handleDelete(u._id, u.name || u.email)}
+                          <button onClick={() => handleDelete(userId, u.name || u.email)}
                             style={{ padding: '5px 10px', background: 'rgba(220,38,38,0.1)', border: '1px solid rgba(220,38,38,0.2)', color: '#F87171', borderRadius: '6px', cursor: 'pointer', fontSize: '12px' }}
                             onMouseEnter={e => { e.currentTarget.style.background = '#DC2626'; e.currentTarget.style.color = '#fff' }}
                             onMouseLeave={e => { e.currentTarget.style.background = 'rgba(220,38,38,0.1)'; e.currentTarget.style.color = '#F87171' }}>

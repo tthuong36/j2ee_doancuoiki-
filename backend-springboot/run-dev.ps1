@@ -29,15 +29,53 @@ function Load-DotEnvFile([string]$filePath) {
     }
 }
 
-Load-DotEnvFile (Join-Path $projectRoot ".env")
-Load-DotEnvFile (Join-Path $projectRoot ".env.example")
-
-$java17 = "C:\Users\admin\.jdks\corretto-17.0.8"
-if (-not (Test-Path (Join-Path $java17 "bin\java.exe"))) {
-    Write-Error "JDK 17 not found at $java17"
+$envFile = Join-Path $projectRoot ".env"
+if (-not (Test-Path $envFile)) {
+    Write-Error "Missing .env file. Create .env from .env.example and fill real Railway credentials."
 }
 
-$env:JAVA_HOME = $java17
+Load-DotEnvFile $envFile
+
+$requiredJava = 17
+$pomPath = Join-Path $projectRoot "pom.xml"
+if (Test-Path $pomPath) {
+    $pomContent = Get-Content -Raw $pomPath
+    if ($pomContent -match "<java.version>(\d+)</java.version>") {
+        $requiredJava = [int]$matches[1]
+    }
+}
+
+$jdkCandidates = @(
+    @{ Version = 22; Path = "C:\Program Files\Java\jdk-22.0.2+9" },
+    @{ Version = 21; Path = "C:\Program Files\Java\jdk-21" },
+    @{ Version = 21; Path = "C:\Program Files\Microsoft\jdk-21" },
+    @{ Version = 17; Path = "C:\Users\admin\.jdks\corretto-17.0.8" }
+)
+
+$selectedJdk = $null
+foreach ($jdk in $jdkCandidates) {
+    $javaExe = Join-Path $jdk.Path "bin\java.exe"
+    if ($jdk.Version -eq $requiredJava -and (Test-Path $javaExe)) {
+        $selectedJdk = $jdk.Path
+        break
+    }
+}
+
+if (-not $selectedJdk) {
+    foreach ($jdk in $jdkCandidates) {
+        $javaExe = Join-Path $jdk.Path "bin\java.exe"
+        if ($jdk.Version -ge $requiredJava -and (Test-Path $javaExe)) {
+            $selectedJdk = $jdk.Path
+            break
+        }
+    }
+}
+
+if (-not $selectedJdk) {
+    Write-Error "No JDK found for java.version=$requiredJava. Install JDK $requiredJava+ and retry."
+}
+
+$env:JAVA_HOME = $selectedJdk
 $env:Path = "$env:JAVA_HOME\bin;C:\apache-maven-3.9.14\bin;$env:Path"
 
 if (-not $env:DB_URL -and $env:MYSQLHOST -and $env:MYSQLPORT -and $env:MYSQLDATABASE) {
@@ -50,8 +88,16 @@ if (-not $env:DB_PASSWORD -and $env:MYSQLPASSWORD) {
     $env:DB_PASSWORD = $env:MYSQLPASSWORD
 }
 
+if ([string]::IsNullOrWhiteSpace($env:DB_URL) -or [string]::IsNullOrWhiteSpace($env:DB_USERNAME) -or [string]::IsNullOrWhiteSpace($env:DB_PASSWORD)) {
+    Write-Error "Missing DB settings. Ensure DB_URL/DB_USERNAME/DB_PASSWORD are set in .env."
+}
+
+if ($env:DB_PASSWORD -eq "your_railway_mysql_password" -or $env:MYSQLPASSWORD -eq "your_railway_mysql_password") {
+    Write-Error "Placeholder DB password detected. Replace with real Railway password in .env."
+}
+
 Write-Host "Using JAVA_HOME=$env:JAVA_HOME"
 Write-Host "Running with DB user=$env:DB_USERNAME host=$env:MYSQLHOST port=$env:MYSQLPORT db=$env:MYSQLDATABASE"
 
 mvn -v
-mvn spring-boot:run
+mvn clean spring-boot:run

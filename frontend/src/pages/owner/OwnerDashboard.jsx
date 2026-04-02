@@ -87,7 +87,7 @@ export default function OwnerDashboard() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {cars.slice(0, 4).map((car) => (
-              <div key={car._id} className="flex gap-4 items-center p-4 bg-dark-3 rounded-xl">
+              <div key={car.id || car._id} className="flex gap-4 items-center p-4 bg-dark-3 rounded-xl">
                 <img
                   src={car.images?.[0] ?? PLACEHOLDER}
                   alt=""

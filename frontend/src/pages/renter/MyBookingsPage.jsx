@@ -89,7 +89,7 @@ export default function MyBookingsPage() {
       ) : (
         <div className="space-y-4">
           {filtered.map((booking) => (
-            <div key={booking._id} className="card p-5 flex gap-5 items-center">
+            <div key={booking.id || booking._id} className="card p-5 flex gap-5 items-center">
               {/* Ảnh xe */}
               <img
                 src={booking.car?.images?.[0] ?? PLACEHOLDER}

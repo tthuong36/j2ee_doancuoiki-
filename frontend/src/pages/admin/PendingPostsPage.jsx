@@ -30,7 +30,7 @@ export default function PendingPostsPage() {
     try {
       await approvePost(id, notes[id] ?? '')
       toast.success('Đã duyệt bài đăng ✅')
-      setPosts((p) => p.filter((post) => post._id !== id))
+      setPosts((p) => p.filter((post) => (post.id || post._id) !== id))
     } catch {
       toast.error('Duyệt thất bại')
     }
@@ -44,7 +44,7 @@ export default function PendingPostsPage() {
     try {
       await rejectPost(id, notes[id])
       toast.success('Đã từ chối bài đăng')
-      setPosts((p) => p.filter((post) => post._id !== id))
+      setPosts((p) => p.filter((post) => (post.id || post._id) !== id))
     } catch {
       toast.error('Từ chối thất bại')
     }
@@ -72,8 +72,10 @@ export default function PendingPostsPage() {
         />
       ) : (
         <div className="space-y-5">
-          {posts.map((post) => (
-            <div key={post._id} className="card p-6">
+          {posts.map((post) => {
+            const postId = post.id || post._id
+            return (
+            <div key={postId} className="card p-6">
 
               {/* Header bài đăng */}
               <div className="flex items-start justify-between gap-4 mb-4">
@@ -111,9 +113,9 @@ export default function PendingPostsPage() {
                 <label className="label">Ghi Chú Xét Duyệt (bắt buộc khi từ chối)</label>
                 <input
                   type="text"
-                  value={notes[post._id] ?? ''}
+                  value={notes[postId] ?? ''}
                   onChange={(e) =>
-                    setNotes((p) => ({ ...p, [post._id]: e.target.value }))
+                    setNotes((p) => ({ ...p, [postId]: e.target.value }))
                   }
                   placeholder="VD: Nội dung hợp lệ / Thiếu thông tin liên hệ"
                   className="input"
@@ -123,20 +125,21 @@ export default function PendingPostsPage() {
               {/* Action buttons */}
               <div className="flex gap-3">
                 <button
-                  onClick={() => handleApprove(post._id)}
+                  onClick={() => handleApprove(postId)}
                   className="btn-success btn"
                 >
                   ✅ Duyệt Bài
                 </button>
                 <button
-                  onClick={() => handleReject(post._id)}
+                  onClick={() => handleReject(postId)}
                   className="btn-danger btn"
                 >
                   ✕ Từ Chối
                 </button>
               </div>
             </div>
-          ))}
+            )
+          })}
         </div>
       )}
     </DashboardLayout>

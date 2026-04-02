@@ -33,18 +33,19 @@ export default function MyCarsPage() {
     try {
       await deleteCar(id)
       toast.success('Đã xóa xe thành công')
-      setCars((prev) => prev.filter((c) => c._id !== id))
+      setCars((prev) => prev.filter((c) => (c.id || c._id) !== id))
     } catch {
       toast.error('Xóa xe thất bại')
     }
   }
 
   async function toggleAvailable(car) {
+    const carId = car.id || car._id
     try {
-      await updateCar(car._id, { available: !car.available })
+      await updateCar(carId, { available: !car.available })
       toast.success(`Đã cập nhật trạng thái xe`)
       setCars((prev) =>
-        prev.map((c) => (c._id === car._id ? { ...c, available: !c.available } : c))
+        prev.map((c) => ((c.id || c._id) === carId ? { ...c, available: !c.available } : c))
       )
     } catch {
       toast.error('Cập nhật thất bại')
@@ -76,7 +77,7 @@ export default function MyCarsPage() {
       ) : (
         <div className="space-y-4">
           {cars.map((car) => (
-            <div key={car._id} className="card p-5 flex gap-5 items-center">
+            <div key={car.id || car._id} className="card p-5 flex gap-5 items-center">
 
               {/* Ảnh */}
               <img
@@ -110,14 +111,14 @@ export default function MyCarsPage() {
                 </button>
 
                 <Link
-                  to={`/owner/cars/${car._id}/edit`}
+                  to={`/owner/cars/${car.id || car._id}/edit`}
                   className="btn-outline btn btn-sm"
                 >
                   ✏️ Sửa
                 </Link>
 
                 <button
-                  onClick={() => handleDelete(car._id, `${car.make} ${car.model}`)}
+                  onClick={() => handleDelete(car.id || car._id, `${car.make} ${car.model}`)}
                   className="btn-danger btn btn-sm"
                 >
                   🗑️ Xóa

@@ -4,6 +4,9 @@ import { useAuth } from '../../context/AuthContext'
 import { getCarReviews, createReview, updateReview, deleteReview } from '../../api/reviewsApi'
 import { formatDate, getInitials } from '../../utils/formatters'
 
+const getReviewId = (review) => review?.id || review?._id
+const getUserId = (userObj) => userObj?.id || userObj?._id || userObj
+
 function StarRating({ value, onChange, readonly = false, size = 24 }) {
   const [hovered, setHovered] = useState(0)
   const display = hovered || value
@@ -112,14 +115,16 @@ function ReviewCard({ review, currentUserId, isAdmin, onDeleted, onUpdated }) {
   const [editRating, setEditRating] = useState(review.rating)
   const [editComment, setEditComment] = useState(review.comment)
   const [saving, setSaving] = useState(false)
-  const isOwner = review.user?._id === currentUserId || review.user === currentUserId
+  const reviewId = getReviewId(review)
+  const reviewUserId = getUserId(review.user)
+  const isOwner = reviewUserId === currentUserId
   const canEdit = isOwner || isAdmin
 
   async function handleUpdate(e) {
     e.preventDefault()
     setSaving(true)
     try {
-      const { data } = await updateReview(review._id, { rating: editRating, comment: editComment })
+      const { data } = await updateReview(reviewId, { rating: editRating, comment: editComment })
       toast.success('Đã cập nhật đánh giá!')
       setEditing(false)
       onUpdated(data)
@@ -131,9 +136,9 @@ function ReviewCard({ review, currentUserId, isAdmin, onDeleted, onUpdated }) {
   async function handleDelete() {
     if (!window.confirm('Xóa đánh giá này?')) return
     try {
-      await deleteReview(review._id)
+      await deleteReview(reviewId)
       toast.success('Đã xóa')
-      onDeleted(review._id)
+      onDeleted(reviewId)
     } catch { toast.error('Xóa thất bại') }
   }
 
@@ -208,7 +213,7 @@ export default function ReviewSection({ carId }) {
 
   useEffect(() => { loadReviews() }, [carId])
 
-  const myReview = reviews.find((r) => r.user?._id === user?.id || r.user === user?.id)
+  const myReview = reviews.find((r) => getUserId(r.user) === user?.id)
   const sorted = [...reviews].sort((a, b) => {
     if (sortBy === 'newest')  return new Date(b.createdAt) - new Date(a.createdAt)
     if (sortBy === 'oldest')  return new Date(a.createdAt) - new Date(b.createdAt)
@@ -264,11 +269,11 @@ export default function ReviewSection({ carId }) {
       ) : (
         <div>
           {sorted.map((review) => (
-            <ReviewCard key={review._id} review={review}
+            <ReviewCard key={getReviewId(review)} review={review}
               currentUserId={user?.id}
               isAdmin={user?.role === 'admin'}
-              onDeleted={(id) => setReviews((p) => p.filter((r) => r._id !== id))}
-              onUpdated={(updated) => setReviews((p) => p.map((r) => r._id === updated._id ? updated : r))}
+              onDeleted={(id) => setReviews((p) => p.filter((r) => getReviewId(r) !== id))}
+              onUpdated={(updated) => setReviews((p) => p.map((r) => getReviewId(r) === getReviewId(updated) ? updated : r))}
             />
           ))}
         </div>
