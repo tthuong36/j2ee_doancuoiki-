@@ -3,6 +3,23 @@ $ErrorActionPreference = "Stop"
 $projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 Set-Location $projectRoot
 
+$serverPort = 5000
+$existingListener = Get-NetTCPConnection -LocalPort $serverPort -State Listen -ErrorAction SilentlyContinue | Select-Object -First 1
+if ($existingListener) {
+    $existingProcess = Get-Process -Id $existingListener.OwningProcess -ErrorAction SilentlyContinue
+    if ($existingProcess -and $existingProcess.ProcessName -eq "java") {
+        Write-Host "Backend already running on port $serverPort (PID=$($existingProcess.Id))." -ForegroundColor Yellow
+        Write-Host "Open: http://localhost:$serverPort/api/cars" -ForegroundColor Yellow
+        exit 0
+    }
+
+    if ($existingProcess) {
+        Write-Error "Port $serverPort is used by PID=$($existingProcess.Id) ($($existingProcess.ProcessName)). Stop that process, then run again."
+    } else {
+        Write-Error "Port $serverPort is already in use. Stop the process using this port, then run again."
+    }
+}
+
 function Load-DotEnvFile([string]$filePath) {
     if (-not (Test-Path $filePath)) {
         return

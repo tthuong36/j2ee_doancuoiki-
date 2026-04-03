@@ -5,6 +5,7 @@ import com.rental.backend.entity.Car;
 import com.rental.backend.entity.Post;
 import com.rental.backend.entity.Review;
 import com.rental.backend.entity.User;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -15,11 +16,15 @@ import org.springframework.stereotype.Component;
 public class ApiMapper {
 
     public Map<String, Object> user(User user) {
+        if (user == null) {
+            return null;
+        }
+
         Map<String, Object> map = new LinkedHashMap<>();
         map.put("id", user.getId());
         map.put("name", user.getName());
         map.put("email", user.getEmail());
-        map.put("role", user.getRole().name().toLowerCase(Locale.ROOT));
+        map.put("role", user.getRole() == null ? null : user.getRole().name().toLowerCase(Locale.ROOT));
         map.put("isActive", user.getIsActive());
         map.put("phone", user.getPhone());
         map.put("address", user.getAddress());
@@ -41,7 +46,7 @@ public class ApiMapper {
         map.put("plate", car.getPlate());
         map.put("pricePerDay", car.getPricePerDay());
         map.put("available", car.getAvailable());
-        map.put("images", car.getImages());
+        map.put("images", car.getImages() == null ? List.of() : new ArrayList<>(car.getImages()));
         map.put("location", car.getLocation());
         map.put("avgRating", car.getAvgRating());
         map.put("reviewCount", car.getReviewCount());
