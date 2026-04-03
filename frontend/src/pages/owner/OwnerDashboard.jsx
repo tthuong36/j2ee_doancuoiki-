@@ -16,6 +16,7 @@ export const OWNER_NAV = [
     items: [
       { to: '/owner',          icon: '📊', label: 'Tổng Quan'      },
       { to: '/owner/cars',     icon: '🚗', label: 'Xe Của Tôi'     },
+      { to: '/owner/bookings', icon: '🗓️', label: 'Duyệt Đặt Xe'   },
       { to: '/owner/cars/add', icon: '➕', label: 'Thêm Xe Mới'    },
     ],
   },

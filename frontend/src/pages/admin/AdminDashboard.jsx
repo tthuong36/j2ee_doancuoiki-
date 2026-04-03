@@ -8,7 +8,6 @@ import { Link } from 'react-router-dom'
 import DashboardLayout from '../../components/layout/DashboardLayout'
 import LoadingSpinner from '../../components/common/LoadingSpinner'
 import { getAllCars } from '../../api/carsApi'
-import { getAllBookingsForAdmin } from '../../api/bookingsApi'
 import { getPendingPosts } from '../../api/postsApi'
 
 export const ADMIN_NAV = [
@@ -18,7 +17,6 @@ export const ADMIN_NAV = [
       { to: '/admin', icon: '📊', label: 'Tổng Quan' },
       { to: '/admin/cars', icon: '🚗', label: 'Quản Lý Xe' },
       { to: '/admin/users', icon: '👥', label: 'Người Dùng' },
-      { to: '/admin/bookings', icon: '🗓️', label: 'Duyệt Đặt Xe' },
       { to: '/admin/posts', icon: '📋', label: 'Duyệt Bài Đăng' },
     ],
   },
@@ -33,15 +31,13 @@ export const ADMIN_NAV = [
 export default function AdminDashboard() {
   const [cars, setCars] = useState([])
   const [pendingPosts, setPendingPosts] = useState([])
-  const [pendingBookings, setPendingBookings] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    Promise.all([getAllCars(), getPendingPosts(), getAllBookingsForAdmin()])
-      .then(([carsRes, postsRes, bookingsRes]) => {
+    Promise.all([getAllCars(), getPendingPosts()])
+      .then(([carsRes, postsRes]) => {
         setCars(carsRes.data)
         setPendingPosts(postsRes.data)
-        setPendingBookings(bookingsRes.data.filter((item) => item.status === 'pending'))
       })
       .catch(() => { })
       .finally(() => setLoading(false))
@@ -62,7 +58,6 @@ export default function AdminDashboard() {
             {[
               { label: 'Tổng Xe', value: cars.length, color: 'text-primary' },
               { label: 'Xe Còn Trống', value: cars.filter((c) => c.available).length, color: 'text-emerald-400' },
-              { label: 'Đơn Chờ Duyệt', value: pendingBookings.length, color: 'text-orange-400' },
               { label: 'Bài Chờ Duyệt', value: pendingPosts.length, color: 'text-yellow-400' },
             ].map(({ label, value, color }) => (
               <div key={label} className="card p-5">
@@ -71,18 +66,6 @@ export default function AdminDashboard() {
               </div>
             ))}
           </div>
-
-          {/* Pending bookings alert */}
-          {pendingBookings.length > 0 && (
-            <div className="mb-4 p-4 bg-orange-500/10 border border-orange-500/30 rounded-xl flex items-center justify-between">
-              <p className="text-orange-300 text-sm font-semibold">
-                ⚠️ Có {pendingBookings.length} đơn đặt xe đang chờ duyệt
-              </p>
-              <Link to="/admin/bookings" className="btn-warning btn btn-sm">
-                Xem Đơn →
-              </Link>
-            </div>
-          )}
 
           {/* Pending posts alert */}
           {pendingPosts.length > 0 && (

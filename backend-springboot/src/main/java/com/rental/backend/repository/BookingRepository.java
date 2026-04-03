@@ -12,7 +12,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findByUserIdOrderByCreatedAtDesc(Long userId);
 
+    List<Booking> findByCarOwnerIdOrderByCreatedAtDesc(Long ownerId);
+
     Optional<Booking> findByIdAndUserId(Long id, Long userId);
+
+    Optional<Booking> findByIdAndCarOwnerId(Long id, Long ownerId);
 
     boolean existsByCarIdAndStatusInAndStartDateLessThanAndEndDateGreaterThan(
         Long carId,
